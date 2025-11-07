@@ -1,18 +1,32 @@
 version: 2.1
 
-orbs:
-  node: circleci/node@5.2
+jobs:
+  backend-tests:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - run:
+          name: Run backend tests
+          command: |
+            cd backend
+            npm ci
+            npm test
+
+  frontend-tests:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - run:
+          name: Run frontend tests
+          command: |
+            cd frontend
+            npm ci
+            npm test
 
 workflows:
   build_and_test:
     jobs:
-      - node/test:
-          name: backend-tests
-          version: '16.10'
-          working-directory: backend
-          pkg-manager: npm
-      - node/test:
-          name: frontend-tests
-          version: '16.10'
-          working-directory: frontend
-          pkg-manager: npm
+      - backend-tests
+      - frontend-tests
