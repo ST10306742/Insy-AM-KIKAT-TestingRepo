@@ -5,15 +5,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check location and package.json
-          command: |
-            pwd
-            ls -a
-            cat backend/package.json | grep test || echo "no test script found"
-      - run:
           name: Run backend tests
           command: |
-            cd backend
+            cd api
             npm ci
             npm test
 
@@ -23,14 +17,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check location and package.json
-          command: |
-            pwd
-            ls -a
-            cat frontend/package.json | grep test || echo "no test script found"
-      - run:
           name: Run frontend tests
           command: |
-            cd frontend
+            cd client
             npm ci
             npm test
+
+workflows:
+  build_and_test:
+    jobs:
+      - backend-tests
+      - frontend-tests
