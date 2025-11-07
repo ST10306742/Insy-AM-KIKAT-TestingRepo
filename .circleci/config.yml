@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Show repo contents
+          command: ls -R | head -20
+      - run:
           name: Run backend tests
           command: |
             cd Backend
@@ -18,6 +21,9 @@ jobs:
       - image: cimg/node:16.10
     steps:
       - checkout
+      - run:
+          name: Show repo contents
+          command: ls -R | head -20
       - run:
           name: Run frontend tests
           command: |
