@@ -2,9 +2,9 @@ version: 2.1
 
 jobs:
   backend-tests:
-    docker:  # ← This was misaligned
+    docker:
       - image: cimg/node:16.10
-    steps:   # ← This was misaligned
+    steps:
       - checkout
       - run:
           name: Debug directory structure
@@ -24,7 +24,7 @@ jobs:
               cd Backend
             elif [ -d "backend" ]; then
               echo "Found backend directory" 
-              cd Backend
+              cd backend  # ← FIXED: Changed 'Backend' to 'backend'
             else
               echo "ERROR: No backend directory found!"
               echo "Available directories:"
