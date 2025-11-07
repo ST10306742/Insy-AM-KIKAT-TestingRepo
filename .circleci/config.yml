@@ -8,11 +8,20 @@ jobs:
       - checkout
       - run:
           name: Show repo contents
-          command: ls -R | head -20
+          command: ls -la
       - run:
           name: Run backend tests
           command: |
-            cd Backend
+            # Check what backend directory exists
+            if [ -d "Backend" ]; then
+              cd Backend
+            elif [ -d "backend" ]; then
+              cd backend
+            else
+              echo "Backend directory not found!"
+              ls -la
+              exit 1
+            fi
             npm ci
             npm test
 
@@ -23,11 +32,20 @@ jobs:
       - checkout
       - run:
           name: Show repo contents
-          command: ls -R | head -20
+          command: ls -la
       - run:
           name: Run frontend tests
           command: |
-            cd frontend
+            # Check what frontend directory exists
+            if [ -d "frontend" ]; then
+              cd frontend
+            elif [ -d "Frontend" ]; then
+              cd Frontend
+            else
+              echo "Frontend directory not found!"
+              ls -la
+              exit 1
+            fi
             npm ci
             npm test
 
