@@ -2,28 +2,40 @@ version: 2.1
 
 jobs:
   backend-tests:
-    docker:
-      - image: cimg/node:16.10
-    steps:
-      - checkout
-      - run:
-          name: Show repo contents
-          command: ls -la
-      - run:
-          name: Run backend tests
-          command: |
-            # Check what backend directory exists
-            if [ -d "Backend" ]; then
-              cd Backend
-            elif [ -d "backend" ]; then
-              cd backend  # ← FIXED: Changed 'Backend' to 'backend'
-            else
-              echo "Backend directory not found!"
-              ls -la
-              exit 1
-            fi
-            npm ci
-            npm test
+  docker:
+    - image: cimg/node:16.10
+  steps:
+    - checkout
+    - run:
+        name: Debug directory structure
+        command: |
+          echo "=== Current directory ==="
+          pwd
+          echo "=== Listing all contents ==="
+          ls -la
+          echo "=== Checking for backend directories ==="
+          find . -type d -name "*ackend*" -o -name "*Backend*" | head -10
+    - run:
+        name: Run backend tests
+        command: |
+          # First, let's find and navigate to the correct directory
+          if [ -d "Backend" ]; then
+            echo "Found Backend directory"
+            cd Backend
+          elif [ -d "backend" ]; then
+            echo "Found backend directory" 
+            cd backend
+          else
+            echo "ERROR: No backend directory found!"
+            echo "Available directories:"
+            ls -la
+            exit 1
+          fi
+          echo "Current directory after cd: $(pwd)"
+          echo "Contents:"
+          ls -la
+          npm ci
+          npm test
 
   frontend-tests:
     docker:
