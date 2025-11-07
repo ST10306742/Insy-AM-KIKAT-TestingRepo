@@ -7,7 +7,7 @@ jobs:
       - run:
           name: Run backend tests
           command: |
-            cd api
+            cd Backend
             npm ci
             npm test
 
@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Run frontend tests
           command: |
-            cd client
+            cd frontend
             npm ci
             npm test
 
