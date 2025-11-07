@@ -2,40 +2,46 @@ version: 2.1
 
 jobs:
   backend-tests:
-    docker:
-      - image: cimg/node:16.10
-    steps:
-      - checkout
-      - run:
-          name: Debug directory structure
-          command: |
-            echo "=== Current directory ==="
-            pwd
-            echo "=== Listing all contents ==="
-            ls -la
-            echo "=== Checking for backend directories ==="
-            find . -type d -name "*ackend*" -o -name "*Backend*" | head -10
-      - run:
-          name: Run backend tests
-          command: |
-            # First, let's find and navigate to the correct directory
-            if [ -d "Backend" ]; then
-              echo "Found Backend directory"
-              cd Backend
-            elif [ -d "backend" ]; then
-              echo "Found backend directory" 
-              cd backend  # ← FIXED: Changed 'Backend' to 'backend'
+  docker:
+    - image: cimg/node:16.10
+  steps:
+    - checkout
+    - run:
+        name: Debug FULL repository structure
+        command: |
+          echo "=== FULL directory tree ==="
+          find . -type d | sort
+          echo "=== Looking for ANY backend-related files ==="
+          find . -name "*ackend*" -type d
+          echo "=== Root directory contents ==="
+          ls -la
+    - run:
+        name: Run backend tests
+        command: |
+          # Let's check what actually exists
+          if [ -d "Backend" ]; then
+            echo "Found Backend directory at root"
+            cd Backend
+          elif [ -d "backend" ]; then
+            echo "Found backend directory at root"
+            cd backend
+          else
+            echo "ERROR: No backend directory found at root level!"
+            echo "Let me search more broadly..."
+            BACKEND_DIR=$(find . -type d -name "*ackend*" | head -1)
+            if [ -n "$BACKEND_DIR" ]; then
+              echo "Found backend directory at: $BACKEND_DIR"
+              cd "$BACKEND_DIR"
             else
-              echo "ERROR: No backend directory found!"
-              echo "Available directories:"
-              ls -la
+              echo "No backend directory found anywhere!"
               exit 1
             fi
-            echo "Current directory after cd: $(pwd)"
-            echo "Contents:"
-            ls -la
-            npm ci
-            npm test
+          fi
+          echo "Current directory: $(pwd)"
+          echo "Contents:"
+          ls -la
+          npm ci
+          npm test
 
   frontend-tests:
     docker:
