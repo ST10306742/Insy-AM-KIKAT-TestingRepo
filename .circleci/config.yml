@@ -16,7 +16,7 @@ jobs:
             if [ -d "Backend" ]; then
               cd Backend
             elif [ -d "backend" ]; then
-              cd backend
+              cd Backend
             else
               echo "Backend directory not found!"
               ls -la
