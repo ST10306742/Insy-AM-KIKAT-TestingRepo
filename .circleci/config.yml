@@ -1,11 +1,15 @@
-version: 2.1
-
 jobs:
   backend-tests:
     docker:
       - image: cimg/node:16.10
     steps:
       - checkout
+      - run:
+          name: Check location and package.json
+          command: |
+            pwd
+            ls -a
+            cat backend/package.json | grep test || echo "no test script found"
       - run:
           name: Run backend tests
           command: |
@@ -19,14 +23,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check location and package.json
+          command: |
+            pwd
+            ls -a
+            cat frontend/package.json | grep test || echo "no test script found"
+      - run:
           name: Run frontend tests
           command: |
             cd frontend
             npm ci
             npm test
-
-workflows:
-  build_and_test:
-    jobs:
-      - backend-tests
-      - frontend-tests
