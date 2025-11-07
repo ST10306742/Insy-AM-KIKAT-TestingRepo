@@ -7,39 +7,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Debug FULL repository structure
+          name: Debug - What's actually here?
           command: |
-            echo "=== FULL directory tree ==="
-            find . -type d | sort
-            echo "=== Looking for ANY backend-related files ==="
-            find . -name "*ackend*" -type d
-            echo "=== Root directory contents ==="
+            echo "=== What's in the root? ==="
             ls -la
+            echo "=== Searching for backend... ==="
+            find . -name "*ackend*" -type d
       - run:
           name: Run backend tests
           command: |
-            # Let's check what actually exists
-            if [ -d "Backend" ]; then
-              echo "Found Backend directory at root"
-              cd Backend
-            elif [ -d "backend" ]; then
-              echo "Found backend directory at root"
-              cd backend
-            else
-              echo "ERROR: No backend directory found at root level!"
-              echo "Let me search more broadly..."
-              BACKEND_DIR=$(find . -type d -name "*ackend*" | head -1)
-              if [ -n "$BACKEND_DIR" ]; then
-                echo "Found backend directory at: $BACKEND_DIR"
-                cd "$BACKEND_DIR"
-              else
-                echo "No backend directory found anywhere!"
-                exit 1
-              fi
-            fi
-            echo "Current directory: $(pwd)"
-            echo "Contents:"
-            ls -la
+            echo "Forcing cd to Backend..."
+            cd Backend
             npm ci
             npm test
 
@@ -49,21 +27,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Show repo contents
-          command: ls -la
-      - run:
           name: Run frontend tests
           command: |
-            # Check what frontend directory exists
-            if [ -d "frontend" ]; then
-              cd frontend
-            elif [ -d "Frontend" ]; then
-              cd Frontend
-            else
-              echo "Frontend directory not found!"
-              ls -la
-              exit 1
-            fi
+            cd frontend
             npm ci
             npm test
 
