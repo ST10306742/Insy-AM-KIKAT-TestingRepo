@@ -1,0 +1,40 @@
+version: 2.1
+
+jobs:
+  backend-tests:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - run:
+          name: Debug - What's actually here?
+          command: |
+            echo "=== What's in the root? ==="
+            ls -la
+            echo "=== Searching for backend... ==="
+            find . -name "*ackend*" -type d
+      - run:
+          name: Run backend tests
+          command: |
+            echo "Forcing cd to Backend..."
+            cd Backend
+            npm ci
+            npm test
+
+  frontend-tests:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - run:
+          name: Run frontend tests
+          command: |
+            cd frontend
+            npm ci
+            npm test
+
+workflows:
+  build_and_test:
+    jobs:
+      - backend-tests
+      - frontend-tests
